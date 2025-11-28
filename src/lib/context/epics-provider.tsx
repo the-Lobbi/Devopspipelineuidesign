@@ -35,14 +35,14 @@ function epicsReducer(state: EpicsState, action: Action): EpicsState {
   switch (action.type) {
     case 'SET_EPICS':
       const newItems = action.payload.reduce((acc, epic) => {
-        acc[epic.key] = epic;
+        acc[epic.id] = epic;
         return acc;
       }, {} as Record<string, Epic>);
       return { ...state, items: newItems, loading: false };
     case 'UPDATE_EPIC':
       return {
         ...state,
-        items: { ...state.items, [action.payload.key]: action.payload },
+        items: { ...state.items, [action.payload.id]: action.payload },
       };
     case 'SET_LOADING':
       return { ...state, loading: action.payload };
@@ -69,22 +69,8 @@ export function EpicsProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // In real app: fetch('/api/epics').then(...)
     // For now, load mock data
-    // We need to map the mock data from lib/data.ts (which has different shape) to Epic type
-    // Or just use it as is if types match closely enough.
-    // Let's assume mapping happens here or we trust the shape for now.
-    // Note: EPICS from lib/data might need transformation.
     
-    const mappedEpics = EPICS.map(e => ({
-        ...e,
-        jiraKey: e.key,
-        summary: e.title,
-        currentStep: typeof e.step === 'string' ? parseInt(e.step.split('/')[0]) || 0 : 0,
-        totalSteps: typeof e.step === 'string' ? parseInt(e.step.split('/')[1]) || 10 : 10,
-        updatedAt: new Date().toISOString(),
-        createdAt: e.created
-    })) as unknown as Epic[];
-
-    dispatch({ type: 'SET_EPICS', payload: mappedEpics });
+    dispatch({ type: 'SET_EPICS', payload: EPICS as unknown as Epic[] });
   }, []);
 
   useEffect(() => {

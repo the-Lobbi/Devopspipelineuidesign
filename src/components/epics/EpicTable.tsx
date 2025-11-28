@@ -24,9 +24,9 @@ export function EpicTable({ onEpicClick }: EpicTableProps) {
         </thead>
         <tbody className="divide-y divide-zinc-800/50">
           {EPICS.map((epic) => {
-            const isPlanning = epic.status === 'PLANNING';
-            const isReview = epic.status === 'REVIEW';
-            const isExecuting = epic.status === 'EXECUTING';
+            const isPlanning = epic.status === 'planning';
+            const isReview = epic.status === 'approval';
+            const isExecuting = epic.status === 'executing';
             
             return (
               <React.Fragment key={epic.id}>
@@ -38,18 +38,18 @@ export function EpicTable({ onEpicClick }: EpicTableProps) {
                     <input type="checkbox" className="rounded bg-zinc-900 border-zinc-700" />
                   </td>
                   <td className="px-4 py-3 font-mono text-sm text-zinc-400 group-hover:text-violet-400 transition-colors">
-                    {epic.key}
+                    {epic.jiraKey}
                   </td>
                   <td className="px-4 py-3">
-                    <div className="font-medium text-zinc-200 mb-0.5">{epic.title}</div>
+                    <div className="font-medium text-zinc-200 mb-0.5">{epic.summary}</div>
                     <div className="flex gap-1">
-                        {epic.tags.map(tag => (
+                        {epic.labels?.map(tag => (
                             <span key={tag} className="text-[10px] px-1.5 py-0.5 bg-zinc-800 text-zinc-500 rounded">{tag}</span>
                         ))}
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <Badge status={epic.status} agent={epic.agent} />
+                    <Badge status={epic.status} agent={epic.assignee || 'Unassigned'} />
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex flex-col gap-1 w-24">
@@ -62,11 +62,11 @@ export function EpicTable({ onEpicClick }: EpicTableProps) {
                                 style={{ width: `${epic.progress}%` }}
                             />
                         </div>
-                        <span className="text-[10px] text-zinc-500">{epic.step}</span>
+                        <span className="text-[10px] text-zinc-500">{epic.currentStep}/{epic.totalSteps}</span>
                     </div>
                   </td>
                   <td className="px-4 py-3 text-sm text-zinc-500">
-                    {epic.timeElapsed === 'Waiting' ? '15m ago' : '2m ago'}
+                    2m ago
                   </td>
                 </tr>
                 
@@ -79,7 +79,7 @@ export function EpicTable({ onEpicClick }: EpicTableProps) {
                             {isReview ? (
                                 <span className="flex items-center gap-1.5 text-amber-500/90">
                                     <AlertTriangle className="size-3" />
-                                    Awaiting approval for 3 stories, 12 tasks
+                                    Awaiting approval
                                 </span>
                             ) : isPlanning ? (
                                 <span className="flex items-center gap-1.5 text-zinc-400">
@@ -89,7 +89,7 @@ export function EpicTable({ onEpicClick }: EpicTableProps) {
                             ) : (
                                 <span className="flex items-center gap-1.5 text-zinc-400">
                                     <Bot className="size-3" />
-                                    Code Generator working on {epic.repo}
+                                    Code Generator working on {epic.targetRepo}
                                 </span>
                             )}
                         </div>
@@ -107,17 +107,16 @@ export function EpicTable({ onEpicClick }: EpicTableProps) {
 function Badge({ status, agent }: { status: string, agent: string | null }) {
     let styles = "bg-zinc-800 text-zinc-400 border-zinc-700";
     
-    if (status === 'PLANNING') styles = "bg-blue-500/20 text-blue-400 border-blue-500/30";
-    if (status === 'REVIEW') styles = "bg-amber-500/20 text-amber-400 border-amber-500/30";
-    if (status === 'EXECUTING') styles = "bg-emerald-500/20 text-emerald-400 border-emerald-500/30";
-    if (status === 'CODE_REVIEW') styles = "bg-violet-500/20 text-violet-400 border-violet-500/30";
-    if (status === 'DONE') styles = "bg-green-500/20 text-green-400 border-green-500/30";
+    if (status === 'planning') styles = "bg-blue-500/20 text-blue-400 border-blue-500/30";
+    if (status === 'approval') styles = "bg-amber-500/20 text-amber-400 border-amber-500/30";
+    if (status === 'executing') styles = "bg-emerald-500/20 text-emerald-400 border-emerald-500/30";
+    if (status === 'code_review') styles = "bg-violet-500/20 text-violet-400 border-violet-500/30";
+    if (status === 'done') styles = "bg-green-500/20 text-green-400 border-green-500/30";
     
     return (
         <div className={cn("inline-flex flex-col items-start justify-center px-2 py-1 rounded-md border text-[10px] font-medium leading-tight", styles)}>
-            <span>{status}</span>
-            {agent && agent !== 'HUMAN' && <span className="opacity-70 flex items-center gap-1 mt-0.5">🤖 {agent.split(' ')[0]}</span>}
-            {agent === 'HUMAN' && <span className="opacity-70 flex items-center gap-1 mt-0.5">👤 Human</span>}
+            <span className="uppercase">{status.replace('_', ' ')}</span>
+            {agent && <span className="opacity-70 flex items-center gap-1 mt-0.5">👤 {agent}</span>}
         </div>
     );
 }

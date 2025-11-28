@@ -70,7 +70,7 @@ export function EpicDetailDrawer() {
                          <h3 className="text-[10px] font-bold uppercase tracking-wider text-zinc-600">Branch</h3>
                          <div className="flex items-center gap-2 text-sm text-zinc-300">
                              <GitPullRequest className="size-3.5" />
-                             <span>feature/{epic.jiraKey.toLowerCase()}</span>
+                             <span>feature/{epic.jiraKey?.toLowerCase() || 'unknown'}</span>
                          </div>
                     </div>
                     <div className="space-y-1">

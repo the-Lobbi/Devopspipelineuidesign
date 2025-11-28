@@ -38,11 +38,11 @@ export function ActivityProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const handleEvent = (data: any) => {
       const newActivity: Activity = {
-        id: Date.now(),
+        id: data.id || Date.now(),
         type: data.type || 'system',
-        agentName: data.agent || 'System',
-        description: data.message,
-        timestamp: 'Just now',
+        agentName: data.agentName || data.agent || 'System',
+        description: data.description || data.message || '',
+        timestamp: data.timestamp || 'Just now',
         context: data.context
       };
       setActivities(prev => [newActivity, ...prev].slice(0, 100));

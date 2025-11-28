@@ -96,7 +96,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   selectEpic: (epicId) => set({ selectedEpicId: epicId }),
   
   addActivity: (activity) => set((state) => ({
-    activities: [activity, ...state.activities].slice(0, 50) // Keep last 50
+    activities: [{ ...activity, id: activity.id ?? `act-${Date.now()}-${Math.random().toString(36).substr(2, 9)}` }, ...state.activities].slice(0, 50) // Keep last 50
   })),
 }));
 

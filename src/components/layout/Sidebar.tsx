@@ -9,6 +9,7 @@ import {
   ChevronsLeftRight,
   Search,
   Globe,
+  Wand,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
@@ -23,6 +24,7 @@ export function SidebarContent({ currentView, onChangeView, onOpenCommand }: Sid
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'epics', label: 'Epics', icon: Layers },
     { id: 'agents', label: 'Agents', icon: Bot },
+    { id: 'wizards', label: 'Wizards', icon: Wand },
     { id: 'knowledge', label: 'Knowledge', icon: Globe },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];

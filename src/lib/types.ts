@@ -63,3 +63,12 @@ export interface Agent {
   tokensUsed?: number;
   duration?: number;
 }
+
+export interface ActivityItem {
+  id: string | number;
+  type: 'system' | 'human' | 'code' | 'test' | 'pr';
+  agentName: string;
+  description: string;
+  timestamp: string;
+  context?: string;
+}

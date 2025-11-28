@@ -11,11 +11,11 @@ interface KanbanBoardProps {
 
 export function KanbanBoard({ onEpicClick }: KanbanBoardProps) {
   const columns = [
-    { id: 'PLANNING', label: 'Planning', count: 2 },
-    { id: 'REVIEW', label: 'Approval', count: 1 },
-    { id: 'EXECUTING', label: 'Executing', count: 2 },
-    { id: 'CODE_REVIEW', label: 'Code Review', count: 1 },
-    { id: 'DONE', label: 'Done', count: 1 },
+    { id: 'planning', label: 'Planning', count: 2 },
+    { id: 'approval', label: 'Approval', count: 1 },
+    { id: 'executing', label: 'Executing', count: 2 },
+    { id: 'code_review', label: 'Code Review', count: 1 },
+    { id: 'done', label: 'Done', count: 1 },
   ];
 
   return (
@@ -60,7 +60,7 @@ export function KanbanBoard({ onEpicClick }: KanbanBoardProps) {
 }
 
 function EpicCard({ epic, onClick }: { epic: any, onClick: () => void }) {
-    const isWaiting = epic.status === 'REVIEW';
+    const isWaiting = epic.status === 'approval';
     
     return (
         <div 
@@ -74,7 +74,7 @@ function EpicCard({ epic, onClick }: { epic: any, onClick: () => void }) {
         >
             <div className="flex items-start justify-between mb-2">
                 <span className="px-2 py-0.5 rounded-md bg-zinc-900 text-[10px] font-mono text-zinc-500 border border-zinc-800">
-                    {epic.key}
+                    {epic.jiraKey}
                 </span>
                 <button className="p-1 -mr-1 -mt-1 rounded-full hover:bg-zinc-800 text-zinc-600 hover:text-zinc-400 transition-colors">
                     <MoreHorizontal className="size-4" />
@@ -82,11 +82,11 @@ function EpicCard({ epic, onClick }: { epic: any, onClick: () => void }) {
             </div>
             
             <h3 className="text-sm font-medium text-zinc-200 mb-3 leading-snug">
-                {epic.title}
+                {epic.summary}
             </h3>
             
             <div className="flex flex-wrap gap-1.5 mb-4">
-                {epic.tags.map((tag: string) => (
+                {epic.labels.map((tag: string) => (
                     <span key={tag} className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-zinc-900 text-zinc-500 border border-zinc-800/50">
                         {tag}
                     </span>

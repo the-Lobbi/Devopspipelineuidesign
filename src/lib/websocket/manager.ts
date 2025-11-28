@@ -37,9 +37,10 @@ export class WebSocketManager {
         this.simulationInterval = setInterval(() => {
             if (Math.random() > 0.7) {
                 this.emit('activity.new', {
+                    id: `mock-${Date.now()}`,
                     type: 'system',
-                    agent: 'System',
-                    message: 'Simulated activity event from mock socket',
+                    agentName: 'System',
+                    description: 'Simulated activity event from mock socket',
                     timestamp: 'Just now'
                 });
             }
