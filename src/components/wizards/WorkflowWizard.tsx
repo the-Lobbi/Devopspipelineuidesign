@@ -4,8 +4,8 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Button } from '../ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { toast } from 'sonner@2.0.3';
-import { Clock, Zap, MousePointer, Plus, Trash2, ArrowRight, Settings } from 'lucide-react';
+import { toast } from 'sonner@2.0.3?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
+import { Clock, Zap, MousePointer, Plus, Trash2, ArrowRight, Settings, CheckCircle2 } from 'lucide-react@0.469.0?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
 import { Card } from '../ui/card';
 
 interface WorkflowStep {

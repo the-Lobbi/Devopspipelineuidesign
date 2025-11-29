@@ -1,9 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
+import { useForm } from "react-hook-form@7.55.0?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom"
+import { zodResolver } from "@hookform/resolvers@3.9.1/zod?deps=react-hook-form@7.55.0,react@18.3.1,react-dom@18.3.1&external=react,react-dom"
+import { z } from "zod@3.23.8?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom"
 import {
   Dialog,
   DialogContent,
@@ -11,21 +11,21 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
+} from "../../ui/dialog"
+import { Button } from "../../ui/button"
+import { Input } from "../../ui/input"
+import { Textarea } from "../../ui/textarea"
+import { Label } from "../../ui/label"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { useCreateEpic } from "@/lib/queries/epics"
-import { toast } from "sonner@2.0.3"
-import { Loader2 } from "lucide-react"
+} from "../../ui/select"
+import { useCreateEpic } from "../../lib/queries/epics"
+import { toast } from "sonner@2.0.3?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom"
+import { Loader2 } from "lucide-react@0.469.0?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom"
 
 const createEpicSchema = z.object({
   summary: z.string().min(5, "Summary must be at least 5 characters"),

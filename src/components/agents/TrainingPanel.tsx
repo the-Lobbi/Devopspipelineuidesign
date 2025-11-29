@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Slider } from '@/components/ui/slider';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Brain, Play, RefreshCw, Upload, FileText, AlertCircle, CheckCircle2, Activity } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { toast } from 'sonner@2.0.3';
+import { Button } from '../ui/button';
+import { Badge } from '../ui/badge';
+import { Slider } from '../ui/slider';
+import { ScrollArea } from '../ui/scroll-area';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Brain, Play, RefreshCw, Upload, FileText, AlertCircle, CheckCircle2, Activity } from 'lucide-react@0.469.0?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
+import { cn } from '../../lib/utils';
+import { toast } from 'sonner@2.0.3?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
 
 interface TrainingPanelProps {
     agent: any;

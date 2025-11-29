@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Search, Info, FileText, Database, Code, Server, Shield, Upload, X } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
-import { toast } from 'sonner@2.0.3';
+import { Search, Info, FileText, Database, Code, Server, Shield, Upload, X } from 'lucide-react@0.469.0?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
+import { Badge } from '../ui/badge';
+import { cn } from '../../lib/utils';
+import { toast } from 'sonner@2.0.3?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
 import {
   Dialog,
   DialogContent,
@@ -13,15 +13,15 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from "../ui/dialog";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@/components/ui/sheet";
-import { Label } from "@/components/ui/label";
+} from "../ui/sheet";
+import { Label } from "../ui/label";
 
 // Mock Data
 const INITIAL_KNOWLEDGE_ITEMS = [

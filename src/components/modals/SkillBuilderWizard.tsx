@@ -1,27 +1,29 @@
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
-import { cn } from '@/lib/utils';
-import { 
-    GraduationCap, ArrowRight, Check, BookOpen, Code, 
-    Layers, Zap, FileText, Box
-} from 'lucide-react';
-import { toast } from 'sonner@2.0.3';
+import { Dialog, DialogContent } from '../ui/dialog';
+import { WizardLayout } from '../wizards/WizardLayout';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Textarea } from '../ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Badge } from '../ui/badge';
+import { Box, FileText } from 'lucide-react@0.469.0?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
+import { toast } from 'sonner@2.0.3?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
 
 interface SkillBuilderWizardProps {
     isOpen: boolean;
     onClose: () => void;
 }
 
+const STEPS = [
+    { id: 'identity', title: 'Identity', description: 'Define skill metadata' },
+    { id: 'blueprint', title: 'Blueprint', description: 'Instructional guide' },
+    { id: 'logic', title: 'Logic', description: 'Code and dependencies' },
+    { id: 'review', title: 'Review', description: 'Verify and publish' }
+];
+
 export function SkillBuilderWizard({ isOpen, onClose }: SkillBuilderWizardProps) {
-    const [step, setStep] = useState(1);
+    const [step, setStep] = useState(0);
     const [formData, setFormData] = useState({
         name: '',
         description: '',
@@ -30,58 +32,38 @@ export function SkillBuilderWizard({ isOpen, onClose }: SkillBuilderWizardProps)
         dependencies: [] as string[]
     });
 
-    const handleNext = () => { if (step < 4) setStep(step + 1); };
-    const handleBack = () => { if (step > 1) setStep(step - 1); };
+    const updateField = (field: string, value: any) => {
+        setFormData(prev => ({ ...prev, [field]: value }));
+    };
+
+    const handleNext = () => { if (step < STEPS.length - 1) setStep(step + 1); };
+    const handleBack = () => { if (step > 0) setStep(step - 1); };
     
     const handleFinish = () => {
         toast.success("Skill Created", {
             description: `${formData.name} is now available for agents.`
         });
         onClose();
-        setStep(1);
-    };
-
-    const updateField = (field: string, value: any) => {
-        setFormData(prev => ({ ...prev, [field]: value }));
+        setStep(0);
     };
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="bg-zinc-950 border-zinc-800 text-zinc-200 sm:max-w-[700px] h-[650px] p-0 gap-0 flex flex-col overflow-hidden">
-                <div className="p-6 border-b border-zinc-800 bg-zinc-900/30">
-                    <div className="flex items-center justify-between mb-6">
-                        <DialogTitle className="text-lg font-bold text-zinc-100 flex items-center gap-2">
-                            <GraduationCap className="size-4 text-amber-400" />
-                            Create Agent Skill
-                        </DialogTitle>
-                        <div className="text-xs font-mono text-zinc-500">STEP {step} OF 4</div>
-                    </div>
-
-                    <div className="relative flex items-center justify-between px-4">
-                        <div className="absolute left-0 right-0 top-1/2 h-0.5 bg-zinc-800 -z-10" />
-                        <div className="absolute left-0 top-1/2 h-0.5 bg-amber-500 -z-10 transition-all duration-500" style={{ width: `${((step - 1) / 3) * 100}%` }} />
-                        {[
-                            { n: 1, label: 'Identity' },
-                            { n: 2, label: 'Blueprint' },
-                            { n: 3, label: 'Logic' },
-                            { n: 4, label: 'Review' }
-                        ].map((s) => (
-                            <div key={s.n} className="flex flex-col items-center gap-2 bg-zinc-950 px-2">
-                                <div className={cn(
-                                    "size-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all",
-                                    step >= s.n ? "bg-amber-500 border-amber-500 text-white" : "bg-zinc-900 border-zinc-800 text-zinc-500"
-                                )}>
-                                    {step > s.n ? <Check className="size-4" /> : s.n}
-                                </div>
-                                <span className={cn("text-[10px] uppercase font-bold tracking-wider transition-colors", step >= s.n ? "text-amber-400" : "text-zinc-600")}>{s.label}</span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                <ScrollArea className="flex-1 bg-[#09090b]">
-                    <div className="p-8">
-                        {step === 1 && (
+            <DialogContent className="max-w-4xl h-[650px] p-0 bg-zinc-950 border-zinc-800 overflow-hidden">
+                <WizardLayout
+                    title="Create Agent Skill"
+                    description="Teach agents new capabilities with instructional blueprints."
+                    steps={STEPS}
+                    currentStep={step}
+                    onStepClick={setStep}
+                    onNext={handleNext}
+                    onBack={handleBack}
+                    onFinish={handleFinish}
+                    isNextDisabled={step === 0 && !formData.name}
+                    className="min-h-0 h-full border-none shadow-none rounded-none bg-transparent"
+                >
+                    <div className="space-y-6">
+                        {step === 0 && (
                             <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
                                 <div className="space-y-4">
                                     <div className="grid gap-2">
@@ -117,7 +99,7 @@ export function SkillBuilderWizard({ isOpen, onClose }: SkillBuilderWizardProps)
                             </div>
                         )}
 
-                        {step === 2 && (
+                        {step === 1 && (
                             <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
                                 <div className="flex items-center justify-between mb-2">
                                     <Label className="text-zinc-400">Instructional Blueprint (SKILL.md)</Label>
@@ -135,7 +117,7 @@ export function SkillBuilderWizard({ isOpen, onClose }: SkillBuilderWizardProps)
                             </div>
                         )}
 
-                        {step === 3 && (
+                        {step === 2 && (
                             <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
                                 <div className="space-y-4">
                                     <div className="grid gap-2">
@@ -162,7 +144,7 @@ export function SkillBuilderWizard({ isOpen, onClose }: SkillBuilderWizardProps)
                             </div>
                         )}
 
-                        {step === 4 && (
+                        {step === 3 && (
                             <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
                                 <div className="p-6 border border-zinc-800 bg-zinc-900/20 rounded-xl space-y-6">
                                     <div className="flex items-start gap-4">
@@ -186,22 +168,7 @@ export function SkillBuilderWizard({ isOpen, onClose }: SkillBuilderWizardProps)
                             </div>
                         )}
                     </div>
-                </ScrollArea>
-
-                <div className="p-6 border-t border-zinc-800 bg-zinc-900/50 flex items-center justify-between">
-                    <Button variant="ghost" onClick={step === 1 ? onClose : handleBack} className="text-zinc-400 hover:text-zinc-200">
-                        {step === 1 ? 'Cancel' : 'Back'}
-                    </Button>
-                    {step < 4 ? (
-                        <Button onClick={handleNext} disabled={!formData.name} className="bg-zinc-100 hover:bg-white text-zinc-900">
-                            Next Step <ArrowRight className="size-4 ml-2" />
-                        </Button>
-                    ) : (
-                        <Button onClick={handleFinish} className="bg-amber-600 hover:bg-amber-500 text-white shadow-[0_0_15px_rgba(245,158,11,0.3)]">
-                            Publish Skill <Zap className="size-4 ml-2 fill-current" />
-                        </Button>
-                    )}
-                </div>
+                </WizardLayout>
             </DialogContent>
         </Dialog>
     );

@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { useFilteredEpics, useAppStore } from '@/lib/store';
-import { FilterDropdown } from '@/components/epics/filter-dropdown';
-import { EpicTableRow } from '@/components/epics/EpicTableRow';
-import { BulkActions } from '@/components/epics/BulkActions';
-import { Plus, Search } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Input } from "@/components/ui/input";
-import { NewEpicDialog } from '@/components/epics/new-epic-dialog';
+import { useFilteredEpics, useAppStore } from '../../lib/store';
+import { FilterDropdown } from '../epics/filter-dropdown';
+import { EpicTableRow } from '../epics/EpicTableRow';
+import { BulkActions } from '../epics/BulkActions';
+import { Plus, Search } from 'lucide-react@0.469.0?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
+import { Button } from '../ui/button';
+import { ScrollArea } from '../ui/scroll-area';
+import { Input } from "../ui/input";
+import { NewEpicDialog } from '../epics/new-epic-dialog';
+import { toast } from 'sonner@2.0.3?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
 
 interface EpicListViewProps {
   onEpicClick: (epicId: string) => void;
@@ -17,6 +18,8 @@ export function EpicListView({ onEpicClick }: EpicListViewProps) {
   const filteredEpics = useFilteredEpics();
   const setFilters = useAppStore((s) => s.setFilters);
   const epicFilters = useAppStore((s) => s.epicFilters);
+  const deleteEpics = useAppStore((s) => s.deleteEpics);
+  const updateEpicsStatus = useAppStore((s) => s.updateEpicsStatus);
   
   const [selectedEpics, setSelectedEpics] = useState<Set<string>>(new Set());
   const [newEpicOpen, setNewEpicOpen] = useState(false);
@@ -32,6 +35,24 @@ export function EpicListView({ onEpicClick }: EpicListViewProps) {
   };
 
   const clearSelection = () => setSelectedEpics(new Set());
+
+  const handleRetry = () => {
+    updateEpicsStatus(Array.from(selectedEpics), 'queued_for_planning');
+    toast.success(`${selectedEpics.size} epics queued for retry`);
+    clearSelection();
+  };
+
+  const handleArchive = () => {
+    updateEpicsStatus(Array.from(selectedEpics), 'cancelled');
+    toast.success(`${selectedEpics.size} epics archived`);
+    clearSelection();
+  };
+
+  const handleDelete = () => {
+    deleteEpics(Array.from(selectedEpics));
+    toast.success(`${selectedEpics.size} epics deleted permanently`);
+    clearSelection();
+  };
 
   return (
     <div className="flex flex-col h-full bg-[#09090b]">
@@ -108,6 +129,9 @@ export function EpicListView({ onEpicClick }: EpicListViewProps) {
       <BulkActions 
         selectedCount={selectedEpics.size} 
         onClearSelection={clearSelection} 
+        onRetry={handleRetry}
+        onArchive={handleArchive}
+        onDelete={handleDelete}
       />
       
       <NewEpicDialog open={newEpicOpen} onOpenChange={setNewEpicOpen} />

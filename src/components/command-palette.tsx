@@ -8,8 +8,8 @@ import {
   CommandItem, 
   CommandSeparator, 
   CommandShortcut 
-} from '@/components/ui/command';
-import { useAppStore, useEpics } from '@/lib/store';
+} from './ui/command';
+import { useAppStore, useEpics } from '../lib/store';
 import { 
   LayoutDashboard, 
   ListTodo, 
@@ -21,8 +21,8 @@ import {
   RefreshCw,
   FileText,
   Search
-} from 'lucide-react';
-import { toast } from 'sonner@2.0.3';
+} from 'lucide-react@0.469.0?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
+import { toast } from 'sonner@2.0.3?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
 
 interface CommandPaletteProps {
   open: boolean;

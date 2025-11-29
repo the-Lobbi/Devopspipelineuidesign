@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
-import { Slider } from '@/components/ui/slider';
-import { cn } from '@/lib/utils';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../ui/dialog';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Textarea } from '../ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { ScrollArea } from '../ui/scroll-area';
+import { Badge } from '../ui/badge';
+import { Switch } from '../ui/switch';
+import { Slider } from '../ui/slider';
+import { cn } from '../../lib/utils';
 import { 
     Bot, ArrowRight, Check, Terminal, Brain, Sparkles, 
     Shield, Search, Server, Zap, Box
-} from 'lucide-react';
-import { toast } from 'sonner@2.0.3';
+} from 'lucide-react@0.469.0?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
+import { toast } from 'sonner@2.0.3?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
 
 interface AgentBuilderWizardProps {
     isOpen: boolean;
@@ -88,7 +88,7 @@ export function AgentBuilderWizard({ isOpen, onClose, onComplete }: AgentBuilder
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="bg-zinc-950 border-zinc-800 text-zinc-200 sm:max-w-[700px] h-[650px] p-0 gap-0 flex flex-col overflow-hidden">
+            <DialogContent aria-describedby={undefined} className="bg-zinc-950 border-zinc-800 text-zinc-200 sm:max-w-[700px] h-[650px] p-0 gap-0 flex flex-col overflow-hidden">
                 {/* Wizard Header */}
                 <div className="p-6 border-b border-zinc-800 bg-zinc-900/30">
                     <div className="flex items-center justify-between mb-6">

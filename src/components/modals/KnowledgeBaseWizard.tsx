@@ -1,28 +1,33 @@
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Badge } from '@/components/ui/badge';
-import { Slider } from '@/components/ui/slider';
-import { Switch } from '@/components/ui/switch';
-import { cn } from '@/lib/utils';
+import { Dialog, DialogContent } from '../ui/dialog';
+import { WizardLayout } from '../wizards/WizardLayout';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Badge } from '../ui/badge';
+import { Slider } from '../ui/slider';
+import { Switch } from '../ui/switch';
+import { cn } from '../../lib/utils';
 import { 
-    Database, ArrowRight, Check, Library, Filter, 
-    BarChart, Layers, RefreshCw, Plus
-} from 'lucide-react';
-import { toast } from 'sonner@2.0.3';
+    Database, BarChart, Plus
+} from 'lucide-react@0.469.0?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
+import { toast } from 'sonner@2.0.3?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
 
 interface KnowledgeBaseWizardProps {
     isOpen: boolean;
     onClose: () => void;
 }
 
+const STEPS = [
+    { id: 'source', title: 'Source', description: 'Connect data source' },
+    { id: 'storage', title: 'Storage', description: 'Vector database config' },
+    { id: 'strategy', title: 'Strategy', description: 'Indexing & retrieval' },
+    { id: 'review', title: 'Review', description: 'Verify settings' }
+];
+
 export function KnowledgeBaseWizard({ isOpen, onClose }: KnowledgeBaseWizardProps) {
-    const [step, setStep] = useState(1);
+    const [step, setStep] = useState(0);
     const [formData, setFormData] = useState({
         name: '',
         description: '',
@@ -35,15 +40,15 @@ export function KnowledgeBaseWizard({ isOpen, onClose }: KnowledgeBaseWizardProp
         hybridSearch: true,
     });
 
-    const handleNext = () => { if (step < 4) setStep(step + 1); };
-    const handleBack = () => { if (step > 1) setStep(step - 1); };
+    const handleNext = () => { if (step < STEPS.length - 1) setStep(step + 1); };
+    const handleBack = () => { if (step > 0) setStep(step - 1); };
     
     const handleFinish = () => {
         toast.success("Knowledge Base Created", {
             description: "Indexing pipeline has been scheduled."
         });
         onClose();
-        setStep(1);
+        setStep(0);
     };
 
     const updateField = (field: string, value: any) => {
@@ -52,41 +57,21 @@ export function KnowledgeBaseWizard({ isOpen, onClose }: KnowledgeBaseWizardProp
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="bg-zinc-950 border-zinc-800 text-zinc-200 sm:max-w-[700px] h-[600px] p-0 gap-0 flex flex-col overflow-hidden">
-                <div className="p-6 border-b border-zinc-800 bg-zinc-900/30">
-                    <div className="flex items-center justify-between mb-6">
-                        <DialogTitle className="text-lg font-bold text-zinc-100 flex items-center gap-2">
-                            <Library className="size-4 text-emerald-400" />
-                            Create Knowledge Base
-                        </DialogTitle>
-                        <div className="text-xs font-mono text-zinc-500">STEP {step} OF 4</div>
-                    </div>
-
-                    <div className="relative flex items-center justify-between px-4">
-                        <div className="absolute left-0 right-0 top-1/2 h-0.5 bg-zinc-800 -z-10" />
-                        <div className="absolute left-0 top-1/2 h-0.5 bg-emerald-500 -z-10 transition-all duration-500" style={{ width: `${((step - 1) / 3) * 100}%` }} />
-                        {[
-                            { n: 1, label: 'Source' },
-                            { n: 2, label: 'Storage' },
-                            { n: 3, label: 'Strategy' },
-                            { n: 4, label: 'Review' }
-                        ].map((s) => (
-                            <div key={s.n} className="flex flex-col items-center gap-2 bg-zinc-950 px-2">
-                                <div className={cn(
-                                    "size-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all",
-                                    step >= s.n ? "bg-emerald-500 border-emerald-500 text-white" : "bg-zinc-900 border-zinc-800 text-zinc-500"
-                                )}>
-                                    {step > s.n ? <Check className="size-4" /> : s.n}
-                                </div>
-                                <span className={cn("text-[10px] uppercase font-bold tracking-wider transition-colors", step >= s.n ? "text-emerald-400" : "text-zinc-600")}>{s.label}</span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                <ScrollArea className="flex-1 bg-[#09090b]">
-                    <div className="p-8">
-                        {step === 1 && (
+            <DialogContent className="max-w-4xl h-[600px] p-0 bg-zinc-950 border-zinc-800 overflow-hidden">
+                <WizardLayout
+                    title="Create Knowledge Base"
+                    description="Connect external data for agent context."
+                    steps={STEPS}
+                    currentStep={step}
+                    onStepClick={setStep}
+                    onNext={handleNext}
+                    onBack={handleBack}
+                    onFinish={handleFinish}
+                    isNextDisabled={step === 0 && !formData.name}
+                    className="min-h-0 h-full border-none shadow-none rounded-none bg-transparent"
+                >
+                    <div className="space-y-6">
+                        {step === 0 && (
                             <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
                                 <div className="space-y-4">
                                     <div className="grid gap-2">
@@ -137,7 +122,7 @@ export function KnowledgeBaseWizard({ isOpen, onClose }: KnowledgeBaseWizardProp
                             </div>
                         )}
 
-                        {step === 2 && (
+                        {step === 1 && (
                             <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
                                 <div className="space-y-4">
                                     <div className="grid gap-2">
@@ -172,7 +157,7 @@ export function KnowledgeBaseWizard({ isOpen, onClose }: KnowledgeBaseWizardProp
                             </div>
                         )}
 
-                        {step === 3 && (
+                        {step === 2 && (
                             <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
                                 <div className="p-4 border border-zinc-800 rounded-lg bg-zinc-900/20 space-y-4">
                                     <div className="flex items-center justify-between">
@@ -203,7 +188,7 @@ export function KnowledgeBaseWizard({ isOpen, onClose }: KnowledgeBaseWizardProp
                             </div>
                         )}
 
-                        {step === 4 && (
+                        {step === 3 && (
                             <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
                                 <div className="p-6 border border-zinc-800 bg-zinc-900/20 rounded-xl text-center space-y-4">
                                     <div className="size-16 rounded-full bg-zinc-800 mx-auto flex items-center justify-center">
@@ -234,22 +219,7 @@ export function KnowledgeBaseWizard({ isOpen, onClose }: KnowledgeBaseWizardProp
                             </div>
                         )}
                     </div>
-                </ScrollArea>
-
-                <div className="p-6 border-t border-zinc-800 bg-zinc-900/50 flex items-center justify-between">
-                    <Button variant="ghost" onClick={step === 1 ? onClose : handleBack} className="text-zinc-400 hover:text-zinc-200">
-                        {step === 1 ? 'Cancel' : 'Back'}
-                    </Button>
-                    {step < 4 ? (
-                        <Button onClick={handleNext} disabled={!formData.name} className="bg-zinc-100 hover:bg-white text-zinc-900">
-                            Next Step <ArrowRight className="size-4 ml-2" />
-                        </Button>
-                    ) : (
-                        <Button onClick={handleFinish} className="bg-emerald-600 hover:bg-emerald-500 text-white shadow-[0_0_15px_rgba(16,185,129,0.3)]">
-                            Start Indexing <RefreshCw className="size-4 ml-2" />
-                        </Button>
-                    )}
-                </div>
+                </WizardLayout>
             </DialogContent>
         </Dialog>
     );

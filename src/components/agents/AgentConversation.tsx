@@ -1,18 +1,18 @@
 
 import React, { useRef, useState, useEffect } from 'react';
-import { GlassCard } from '@/components/ui/glass-card';
-import { Button } from '@/components/ui/button';
-import { X, Copy, Check, Terminal, User, Send, Plus, Users, MessageSquare } from 'lucide-react';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { cn } from '@/lib/utils';
-import { toast } from 'sonner@2.0.3';
+import { GlassCard } from '../ui/glass-card';
+import { Button } from '../ui/button';
+import { X, Copy, Check, Terminal, User, Send, Plus, Users, MessageSquare } from 'lucide-react@0.469.0?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
+import { ScrollArea } from '../ui/scroll-area';
+import { cn } from '../../lib/utils';
+import { toast } from 'sonner@2.0.3?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
 import { AgentNode } from './AgentTree';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "../ui/dropdown-menu";
 
 interface AgentConversationProps {
   agent: AgentNode;

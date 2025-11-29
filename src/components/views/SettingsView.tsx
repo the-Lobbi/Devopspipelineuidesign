@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Switch } from '@/components/ui/switch';
-import { IntegrationCard } from '@/components/settings/IntegrationCard';
+import { cn } from '../../lib/utils';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Switch } from '../ui/switch';
+import { IntegrationCard } from '../settings/IntegrationCard';
 import { 
   Settings as SettingsIcon,
   Globe,
@@ -19,8 +19,8 @@ import {
   Github,
   FileText,
   Server
-} from 'lucide-react';
-import { toast } from 'sonner@2.0.3';
+} from 'lucide-react@0.469.0?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
+import { toast } from 'sonner@2.0.3?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
 
 export function SettingsView() {
   const [activeSection, setActiveSection] = useState('general');

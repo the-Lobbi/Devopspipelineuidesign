@@ -1,20 +1,18 @@
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
-import { cn } from '@/lib/utils';
+import { Dialog, DialogContent } from '../ui/dialog';
+import { WizardLayout } from '../wizards/WizardLayout';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Textarea } from '../ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Badge } from '../ui/badge';
+import { Switch } from '../ui/switch';
+import { cn } from '../../lib/utils';
 import { 
-    Wrench, ArrowRight, ArrowLeft, Check, Terminal, Code, Globe, 
-    Database, Shield, Plus, Trash, Play 
-} from 'lucide-react';
-import { toast } from 'sonner@2.0.3';
+    Wrench, Check, Code, Globe, Server, Plus, Trash, Play 
+} from 'lucide-react@0.469.0?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
+import { toast } from 'sonner@2.0.3?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
 
 interface ToolBuilderWizardProps {
     isOpen: boolean;
@@ -22,8 +20,16 @@ interface ToolBuilderWizardProps {
     onComplete: (toolData: any) => void;
 }
 
+const STEPS = [
+    { id: 'identity', title: 'Identity', description: 'Basic tool information' },
+    { id: 'type', title: 'Type', description: 'Select implementation type' },
+    { id: 'schema', title: 'Schema', description: 'Define input parameters' },
+    { id: 'ui', title: 'UI', description: 'Frontend interaction' },
+    { id: 'review', title: 'Review', description: 'Verify and create' }
+];
+
 export function ToolBuilderWizard({ isOpen, onClose, onComplete }: ToolBuilderWizardProps) {
-    const [step, setStep] = useState(1);
+    const [step, setStep] = useState(0);
     const [formData, setFormData] = useState({
         name: '',
         id: '',
@@ -36,23 +42,6 @@ export function ToolBuilderWizard({ isOpen, onClose, onComplete }: ToolBuilderWi
         apiEndpoint: '',
         apiMethod: 'GET'
     });
-
-    const handleNext = () => {
-        if (step < 4) setStep(step + 1);
-    };
-
-    const handleBack = () => {
-        if (step > 1) setStep(step - 1);
-    };
-
-    const handleFinish = () => {
-        onComplete(formData);
-        onClose();
-        setStep(1);
-        toast.success("Tool Created", {
-            description: `${formData.name} has been added to the registry.`
-        });
-    };
 
     const updateField = (field: string, value: any) => {
         setFormData(prev => ({ ...prev, [field]: value }));
@@ -79,58 +68,40 @@ export function ToolBuilderWizard({ isOpen, onClose, onComplete }: ToolBuilderWi
         }));
     };
 
+    const handleNext = () => {
+        if (step < STEPS.length - 1) setStep(step + 1);
+    };
+
+    const handleBack = () => {
+        if (step > 0) setStep(step - 1);
+    };
+
+    const handleFinish = () => {
+        onComplete(formData);
+        onClose();
+        setStep(0);
+        toast.success("Tool Created", {
+            description: `${formData.name} has been added to the registry.`
+        });
+    };
+
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="bg-zinc-950 border-zinc-800 text-zinc-200 sm:max-w-[700px] h-[650px] p-0 gap-0 flex flex-col overflow-hidden">
-                {/* Wizard Header */}
-                <div className="p-6 border-b border-zinc-800 bg-zinc-900/30">
-                    <div className="flex items-center justify-between mb-6">
-                        <DialogTitle className="text-lg font-bold text-zinc-100 flex items-center gap-2">
-                            <Wrench className="size-4 text-indigo-400" />
-                            Create New Capability
-                        </DialogTitle>
-                        <div className="text-xs font-mono text-zinc-500">
-                            STEP {step} OF 4
-                        </div>
-                    </div>
-
-                    {/* Progress Steps */}
-                    <div className="relative flex items-center justify-between px-4">
-                        <div className="absolute left-0 right-0 top-1/2 h-0.5 bg-zinc-800 -z-10" />
-                        <div 
-                            className="absolute left-0 top-1/2 h-0.5 bg-indigo-500 -z-10 transition-all duration-500" 
-                            style={{ width: `${((step - 1) / 3) * 100}%` }} 
-                        />
-                        
-                        {[
-                            { n: 1, label: 'Identity' }, 
-                            { n: 2, label: 'Type' }, 
-                            { n: 3, label: 'Schema' }, 
-                            { n: 4, label: 'UI' },
-                            { n: 5, label: 'Review' }
-                        ].map((s) => (
-                            <div key={s.n} className="flex flex-col items-center gap-2 bg-zinc-950 px-2">
-                                <div className={cn(
-                                    "size-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all",
-                                    step >= s.n 
-                                        ? "bg-indigo-500 border-indigo-500 text-white" 
-                                        : "bg-zinc-900 border-zinc-800 text-zinc-500"
-                                )}>
-                                    {step > s.n ? <Check className="size-4" /> : s.n}
-                                </div>
-                                <span className={cn(
-                                    "text-[10px] uppercase font-bold tracking-wider transition-colors",
-                                    step >= s.n ? "text-indigo-400" : "text-zinc-600"
-                                )}>{s.label}</span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Step Content */}
-                <ScrollArea className="flex-1 bg-[#09090b]">
-                    <div className="p-8">
-                        {step === 1 && (
+            <DialogContent className="max-w-4xl h-[650px] p-0 bg-zinc-950 border-zinc-800 overflow-hidden">
+                <WizardLayout
+                    title="Create New Capability"
+                    description="Extending agent capabilities with new tools."
+                    steps={STEPS}
+                    currentStep={step}
+                    onStepClick={setStep}
+                    onNext={handleNext}
+                    onBack={handleBack}
+                    onFinish={handleFinish}
+                    isNextDisabled={step === 0 && !formData.name}
+                    className="min-h-0 h-full border-none shadow-none rounded-none bg-transparent"
+                >
+                    <div className="space-y-6">
+                        {step === 0 && (
                             <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
                                 <div className="space-y-4">
                                     <div className="grid gap-2">
@@ -195,7 +166,7 @@ export function ToolBuilderWizard({ isOpen, onClose, onComplete }: ToolBuilderWi
                             </div>
                         )}
 
-                        {step === 2 && (
+                        {step === 1 && (
                             <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
                                 <div className="grid grid-cols-3 gap-4">
                                     {[
@@ -261,7 +232,7 @@ export function ToolBuilderWizard({ isOpen, onClose, onComplete }: ToolBuilderWi
                             </div>
                         )}
 
-                        {step === 3 && (
+                        {step === 2 && (
                             <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
                                 <div className="flex items-center justify-between">
                                     <Label className="text-zinc-400">Input Schema Definition</Label>
@@ -329,7 +300,7 @@ export function ToolBuilderWizard({ isOpen, onClose, onComplete }: ToolBuilderWi
                             </div>
                         )}
 
-                        {step === 4 && (
+                        {step === 3 && (
                             <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
                                 <div className="p-4 border border-zinc-800 rounded-lg bg-zinc-900/20 space-y-4">
                                     <div className="space-y-2">
@@ -361,7 +332,7 @@ export function ToolBuilderWizard({ isOpen, onClose, onComplete }: ToolBuilderWi
                             </div>
                         )}
 
-                        {step === 5 && (
+                        {step === 4 && (
                             <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
                                 <div className="p-4 bg-zinc-900/50 border border-zinc-800 rounded-xl space-y-4">
                                     <div className="flex items-center gap-4">
@@ -408,35 +379,7 @@ export function ToolBuilderWizard({ isOpen, onClose, onComplete }: ToolBuilderWi
                             </div>
                         )}
                     </div>
-                </ScrollArea>
-
-                {/* Footer Controls */}
-                <div className="p-6 border-t border-zinc-800 bg-zinc-900/50 flex items-center justify-between">
-                    <Button 
-                        variant="ghost" 
-                        onClick={step === 1 ? onClose : handleBack}
-                        className="text-zinc-400 hover:text-zinc-200"
-                    >
-                        {step === 1 ? 'Cancel' : 'Back'}
-                    </Button>
-                    
-                    {step < 5 ? (
-                        <Button 
-                            onClick={handleNext}
-                            disabled={!formData.name}
-                            className="bg-zinc-100 hover:bg-white text-zinc-900"
-                        >
-                            Next Step <ArrowRight className="size-4 ml-2" />
-                        </Button>
-                    ) : (
-                        <Button 
-                            onClick={handleFinish}
-                            className="bg-indigo-600 hover:bg-indigo-500 text-white shadow-[0_0_15px_rgba(99,102,241,0.3)]"
-                        >
-                            Create Tool <Check className="size-4 ml-2" />
-                        </Button>
-                    )}
-                </div>
+                </WizardLayout>
             </DialogContent>
         </Dialog>
     );

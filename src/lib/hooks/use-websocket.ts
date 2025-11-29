@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
-import { WebSocketManager } from '@/lib/websocket/manager';
-import { useAppStore } from '@/lib/store';
-import { toast } from 'sonner@2.0.3';
+import { WebSocketManager } from '../websocket/manager';
+import { useAppStore } from '../store';
+import { toast } from 'sonner@2.0.3?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
 
 // Singleton instance for the application
 let wsManager: WebSocketManager | null = null;
@@ -29,7 +29,9 @@ export function useWebSocket(channels: string[] = []) {
     const cleanupStatus = manager.onStatusChange((status) => {
       setConnectionStatus(status);
       if (status === 'connected') {
-        // toast.success("System Connected", { description: "Real-time telemetry active." });
+        toast.success("System Connected", { description: "Real-time telemetry active." });
+      } else if (status === 'disconnected') {
+        toast.error("System Disconnected", { description: "Attempting to reconnect..." });
       }
     });
 
@@ -51,6 +53,7 @@ export function useWebSocket(channels: string[] = []) {
 
   return {
     isConnected: manager.status === 'connected',
-    send: manager.send.bind(manager)
+    send: manager.send.bind(manager),
+    reconnect: manager.connect.bind(manager)
   };
 }
