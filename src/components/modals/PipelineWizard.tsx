@@ -12,7 +12,7 @@ import {
     Workflow, ArrowRight, Check, GitBranch, LayoutList, 
     RefreshCw, Shield, Zap, GitMerge, Repeat, Users
 } from 'lucide-react';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { AgentNode, AgentLink } from '@/components/agents/AgentTree';
 
 interface PipelineWizardProps {

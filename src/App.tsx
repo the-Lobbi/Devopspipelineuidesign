@@ -7,7 +7,7 @@ import { EpicsProvider } from './lib/context/epics-provider';
 import { AgentsProvider } from './lib/context/agents-provider';
 import { ActivityProvider } from './lib/context/activity-provider';
 import { NotificationsProvider } from './lib/context/notifications-provider';
-import { Toaster } from 'sonner@2.0.3';
+import { Toaster } from 'sonner';
 import { PageTransition } from '@/components/ui/page-transition';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';

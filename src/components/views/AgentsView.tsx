@@ -16,11 +16,11 @@ import { PipelineTimeline, TimelineStep } from '../agents/PipelineTimeline';
 import { GlobalConsole, LogEntry } from '../ui/global-console';
 import { ApprovalQueue } from './ApprovalQueue';
 import { TracePanel } from '../ui/trace-panel';
-import { Search, Filter, RefreshCw, Cpu, Activity, Zap, Network, Plus, GitMerge, LayoutList, CircleDashed, MousePointer2, Play, Wrench, Library, GraduationCap, Workflow, ShieldAlert, Terminal, FileText } from 'lucide-react@0.469.0?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
+import { Search, Filter, RefreshCw, Cpu, Activity, Zap, Network, Plus, GitMerge, LayoutList, CircleDashed, MousePointer2, Play, Wrench, Library, GraduationCap, Workflow, ShieldAlert, Terminal, FileText } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Badge } from '../ui/badge';
-import { toast } from 'sonner@2.0.3?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
+import { toast } from 'sonner';
 import { cn } from '../../lib/utils';
 
 // Initial Data converted to Graph format

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
-import { Save, RotateCcw, Sparkles, Wand2 } from 'lucide-react@0.469.0?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
-import { toast } from 'sonner@2.0.3?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
+import { Save, RotateCcw, Sparkles, Wand2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface PromptEditorProps {
     agent: any;

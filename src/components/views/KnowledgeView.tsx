@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Search, Info, FileText, Database, Code, Server, Shield, Upload, X } from 'lucide-react@0.469.0?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
+import { Search, Info, FileText, Database, Code, Server, Shield, Upload, X } from 'lucide-react';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { cn } from '../../lib/utils';
-import { toast } from 'sonner@2.0.3?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
+import { toast } from 'sonner';
 import {
   Dialog,
   DialogContent,

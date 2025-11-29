@@ -6,8 +6,8 @@ import { Button } from '../ui/button';
 import { cn } from '../../lib/utils';
 import { 
     Key, Globe, Github, Slack, RefreshCw, Shield, Check
-} from 'lucide-react@0.469.0?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
-import { toast } from 'sonner@2.0.3?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
+} from 'lucide-react';
+import { toast } from 'sonner';
 
 const PROVIDERS = [
     { id: 'jira', name: 'Jira Cloud', icon: Globe, color: 'text-blue-500', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },

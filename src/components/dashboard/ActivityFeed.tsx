@@ -3,9 +3,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useActivities, useConnectionStatus } from '../../lib/store';
 import { cn } from '../../lib/utils';
-import { Terminal, CheckCircle2, MessageSquare, Activity, Zap, GitPullRequest, FileText, Pause, Play, Hash } from 'lucide-react@0.469.0?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
+import { Terminal, CheckCircle2, MessageSquare, Activity, Zap, GitPullRequest, FileText, Pause, Play, Hash } from 'lucide-react';
 import { ScrollArea } from '../ui/scroll-area';
-import { toast } from 'sonner@2.0.3?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
+import { toast } from 'sonner';
 import { Button } from '../ui/button';
 
 export function ActivityFeed({ className }: { className?: string }) {
