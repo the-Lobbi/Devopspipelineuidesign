@@ -24,7 +24,10 @@ export interface AgentNode {
   activity: string;
   x: number;
   y: number;
+  width?: number;
+  height?: number;
   data?: any;
+  confidence?: number; // 0-100
 }
 
 export interface AgentLink {
@@ -50,6 +53,34 @@ interface AgentTreeProps {
 
 const NODE_WIDTH = 260;
 const NODE_HEIGHT = 100;
+
+const ConfidenceGauge = ({ score }: { score: number }) => {
+  const radius = 14;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (score / 100) * circumference;
+  const color = score >= 80 ? '#10b981' : score >= 50 ? '#f59e0b' : '#ef4444';
+  
+  return (
+    <div className="absolute -top-3 -right-3 bg-zinc-950 rounded-full p-0.5 shadow-lg z-20" title={`Confidence: ${score}%`}>
+      <div className="relative size-9 flex items-center justify-center">
+        <svg className="size-full -rotate-90">
+          <circle cx="18" cy="18" r={radius} fill="none" stroke="#27272a" strokeWidth="3" />
+          <circle 
+              cx="18" cy="18" r={radius} 
+              fill="none" 
+              stroke={color} 
+              strokeWidth="3"
+              strokeDasharray={circumference}
+              strokeDashoffset={offset}
+              strokeLinecap="round"
+              className="transition-all duration-500 ease-out"
+          />
+        </svg>
+        <span className="absolute text-[9px] font-mono font-bold text-zinc-300">{score}</span>
+      </div>
+    </div>
+  );
+};
 
 function Node({ 
     node, 
@@ -94,9 +125,43 @@ function Node({
     }
 
     const isLogic = node.role === 'logic';
+    const isTeam = node.role === 'team';
     const statusColor = node.status === 'running' ? '#10b981' : 
                        node.status === 'waiting' ? '#f59e0b' :
                        node.status === 'error' ? '#ef4444' : '#27272a';
+
+    if (isTeam) {
+        const w = node.width || 400;
+        const h = node.height || 300;
+        return (
+            <g transform={`translate(${node.x}, ${node.y})`}>
+                <rect 
+                    x={0} y={0} 
+                    width={w} height={h} 
+                    rx={16} 
+                    fill="none" 
+                    stroke="#3f3f46" 
+                    strokeWidth="2" 
+                    strokeDasharray="8 8"
+                    className="opacity-50"
+                />
+                <rect 
+                    x={0} y={0} 
+                    width={w} height={h} 
+                    rx={16} 
+                    fill="#18181b" 
+                    fillOpacity="0.2"
+                />
+                <foreignObject x={0} y={-30} width={w} height={30}>
+                    <div className="flex items-center gap-2 px-2">
+                        <div className="bg-zinc-800/80 backdrop-blur text-zinc-300 px-3 py-1 rounded-t-lg text-xs font-bold uppercase tracking-wider border border-zinc-700 border-b-0">
+                            {node.name} Team
+                        </div>
+                    </div>
+                </foreignObject>
+            </g>
+        );
+    }
 
     return (
         <ContextMenu>
@@ -254,10 +319,13 @@ function Node({
                                                         {node.name}
                                                     </div>
                                                     <div className="text-[10px] text-zinc-500 font-mono uppercase tracking-wider flex items-center gap-1.5">
-                                                        <span className="text-violet-500/50">ID:</span> {node.id.split('-')[1]}
+                                                        <span className="text-violet-500/50">ID:</span> {node.id.split('-')[1] || node.id}
                                                     </div>
                                                 </div>
                                             </div>
+
+                                            {/* Confidence Gauge */}
+                                            {node.confidence !== undefined && <ConfidenceGauge score={node.confidence} />}
 
                                             {/* Footer / Stats */}
                                             <div className="space-y-2">
@@ -526,6 +594,17 @@ export function AgentTree({
                         <feMergeNode in="SourceGraphic"/>
                     </feMerge>
                 </filter>
+                <style>
+                    {`
+                        @keyframes flow {
+                            from { stroke-dashoffset: 24; }
+                            to { stroke-dashoffset: 0; }
+                        }
+                        .animate-flow {
+                            animation: flow 1s linear infinite;
+                        }
+                    `}
+                </style>
             </defs>
 
             <g transform={`translate(${pan.x},${pan.y}) scale(${scale})`}>
@@ -559,19 +638,44 @@ export function AgentTree({
 
                     return (
                         <g key={link.id} className="group/link">
+                            {/* Base Line */}
                             <path 
                                 d={d} 
                                 fill="none" 
                                 stroke={strokeColor} 
-                                strokeWidth={link.active ? "3" : "2"} 
+                                strokeWidth={link.active ? "2" : "2"} 
                                 strokeOpacity={link.active ? "1" : "0.5"}
-                                markerEnd="url(#arrowhead)"
+                                markerEnd={link.active ? undefined : "url(#arrowhead)"}
                                 className="transition-all duration-300"
                             />
+                            
+                            {/* Active Flow Effect */}
                             {link.active && (
-                                <circle r="4" fill={link.variant ? strokeColor : "#8b5cf6"}>
-                                    <animateMotion dur="1s" repeatCount="indefinite" path={d} keyPoints="0;1" keyTimes="0;1" calcMode="linear" />
-                                </circle>
+                                <>
+                                    {/* Glow underlying */}
+                                    <path 
+                                        d={d} 
+                                        fill="none" 
+                                        stroke={strokeColor} 
+                                        strokeWidth="6" 
+                                        strokeOpacity="0.15" 
+                                        className="animate-pulse"
+                                    />
+                                    {/* Dashed Flow Line */}
+                                    <path 
+                                        d={d} 
+                                        fill="none" 
+                                        stroke={strokeColor} 
+                                        strokeWidth="2" 
+                                        strokeDasharray="6 6"
+                                        className="animate-flow opacity-80"
+                                        strokeLinecap="round"
+                                    />
+                                    {/* Traveling Dot */}
+                                    <circle r="3" fill={link.variant ? strokeColor : "#8b5cf6"} filter="url(#glow)">
+                                        <animateMotion dur="1.5s" repeatCount="indefinite" path={d} keyPoints="0;1" keyTimes="0;1" calcMode="linear" />
+                                    </circle>
+                                </>
                             )}
                             
                             {link.label && (

@@ -14,7 +14,9 @@ import { SkillBuilderWizard } from '@/components/modals/SkillBuilderWizard';
 import { NodePalette } from '@/components/agents/NodePalette';
 import { PipelineTimeline, TimelineStep } from '@/components/agents/PipelineTimeline';
 import { GlobalConsole, LogEntry } from '@/components/ui/global-console';
-import { Search, Filter, RefreshCw, Cpu, Activity, Zap, Network, Plus, GitMerge, LayoutList, CircleDashed, MousePointer2, Play, Wrench, Library, GraduationCap, Workflow } from 'lucide-react';
+import { ApprovalQueue } from '@/components/views/ApprovalQueue';
+import { TracePanel } from '@/components/ui/trace-panel';
+import { Search, Filter, RefreshCw, Cpu, Activity, Zap, Network, Plus, GitMerge, LayoutList, CircleDashed, MousePointer2, Play, Wrench, Library, GraduationCap, Workflow, ShieldAlert, Terminal, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -31,10 +33,10 @@ const INITIAL_NODES: AgentNode[] = [
 ];
 
 const INITIAL_LINKS: AgentLink[] = [
-    { id: 'link-1', source: 'root', target: 'logic-1', type: 'command' },
-    { id: 'link-2', source: 'logic-1', target: 'agent-1', type: 'command', label: 'APPROVED', variant: 'success' },
+    { id: 'link-1', source: 'root', target: 'logic-1', type: 'command', active: true },
+    { id: 'link-2', source: 'logic-1', target: 'agent-1', type: 'command', label: 'APPROVED', variant: 'success', active: true },
     { id: 'link-3', source: 'logic-1', target: 'agent-2', type: 'command', label: 'REJECTED', variant: 'danger' },
-    { id: 'link-4', source: 'agent-1', target: 'agent-3', type: 'data', label: 'SPECS', variant: 'default' },
+    { id: 'link-4', source: 'agent-1', target: 'agent-3', type: 'data', label: 'SPECS', variant: 'default', active: true },
 ];
 
 const MOCK_TIMELINE_STEPS: TimelineStep[] = [
@@ -59,6 +61,8 @@ export function AgentsView() {
   const [showPipelineWizard, setShowPipelineWizard] = useState(false);
   const [showKnowledgeBaseWizard, setShowKnowledgeBaseWizard] = useState(false);
   const [showSkillBuilderWizard, setShowSkillBuilderWizard] = useState(false);
+  const [showApprovalQueue, setShowApprovalQueue] = useState(false);
+  const [activePanel, setActivePanel] = useState<'console' | 'trace'>('console');
   const [approvalNode, setApprovalNode] = useState<AgentNode | null>(null);
   const [timelineSteps, setTimelineSteps] = useState<TimelineStep[]>(MOCK_TIMELINE_STEPS);
   const [pipelineStartTime, setPipelineStartTime] = useState<string>("00:00:00");
@@ -343,6 +347,17 @@ export function AgentsView() {
                 </div>
             </div>
             
+            <Button 
+                variant="ghost" 
+                size="icon"
+                className="relative text-zinc-400 hover:text-zinc-100 mr-2"
+                onClick={() => setShowApprovalQueue(true)}
+                title="Pending Approvals"
+            >
+                <ShieldAlert className="size-5" />
+                <span className="absolute top-2 right-2 size-2 bg-red-500 rounded-full animate-pulse ring-2 ring-[#09090b]" />
+            </Button>
+
             <div className="h-8 w-px bg-zinc-800 mx-2" />
             
             <div className="flex items-center gap-6 text-sm">
@@ -492,13 +507,40 @@ export function AgentsView() {
                 isReplaying={isReplaying}
             />
             
-            {/* Global Console Drawer */}
-            <GlobalConsole 
-                logs={systemLogs} 
-                onLogClick={(log) => {
-                    if (log.nodeId) setSelectedAgentId(log.nodeId);
-                }}
-            />
+            {/* Bottom Panel (Console / Trace) */}
+            {activePanel === 'console' ? (
+                <GlobalConsole 
+                    logs={systemLogs} 
+                    onLogClick={(log) => {
+                        if (log.nodeId) setSelectedAgentId(log.nodeId);
+                    }}
+                />
+            ) : (
+                <TracePanel />
+            )}
+
+            {/* Panel Toggle Tabs (Floating above panel) */}
+            <div className="absolute bottom-[260px] left-4 flex bg-zinc-900 border border-zinc-800 rounded-t-lg overflow-hidden z-20">
+                <button 
+                    onClick={() => setActivePanel('console')}
+                    className={cn(
+                        "px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider flex items-center gap-2 transition-colors",
+                        activePanel === 'console' ? "bg-zinc-800 text-zinc-200" : "text-zinc-500 hover:text-zinc-300"
+                    )}
+                >
+                    <Terminal className="size-3" /> Console
+                </button>
+                <div className="w-px bg-zinc-800" />
+                <button 
+                    onClick={() => setActivePanel('trace')}
+                    className={cn(
+                        "px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider flex items-center gap-2 transition-colors",
+                        activePanel === 'trace' ? "bg-zinc-800 text-zinc-200" : "text-zinc-500 hover:text-zinc-300"
+                    )}
+                >
+                    <Activity className="size-3" /> Trace
+                </button>
+            </div>
         </div>
 
         {/* Right: Details Panel (Slide-over) */}
@@ -573,6 +615,15 @@ export function AgentsView() {
       <KnowledgeBaseWizard
         isOpen={showKnowledgeBaseWizard}
         onClose={() => setShowKnowledgeBaseWizard(false)}
+      />
+      
+      <ApprovalQueue
+        isOpen={showApprovalQueue}
+        onClose={() => setShowApprovalQueue(false)}
+        onSelectApproval={(id) => {
+            setShowApprovalQueue(false);
+            setApprovalNode(nodes[0]); // Mock selecting an agent
+        }}
       />
       
       {approvalNode && (
