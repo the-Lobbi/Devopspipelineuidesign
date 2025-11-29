@@ -5,25 +5,38 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
-interface LogEntry {
+import { ToolResultRenderer } from '@/components/agents/ToolResultRenderer';
+
+export interface LogEntry {
   id: string;
   timestamp: string;
   level: 'info' | 'warn' | 'error' | 'debug' | 'success';
   source: string;
   message: string;
+  toolName?: string;
+  toolOutput?: any;
+  nodeId?: string;
 }
 
-export function GlobalConsole() {
+interface GlobalConsoleProps {
+    logs?: LogEntry[];
+    onLogClick?: (log: LogEntry) => void;
+}
+
+export function GlobalConsole({ logs: externalLogs, onLogClick }: GlobalConsoleProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-  const [logs, setLogs] = useState<LogEntry[]>([]);
+  const [internalLogs, setInternalLogs] = useState<LogEntry[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Simulate incoming logs
-  useEffect(() => {
-    if (isPaused) return;
+  // Use external logs if provided, otherwise use internal simulation
+  const logs = externalLogs || internalLogs;
 
-    const sources = ['Orchestrator', 'System', 'Network', 'Security', 'Database'];
+  // Simulate incoming logs only if no external logs provided
+  useEffect(() => {
+    if (externalLogs || isPaused) return;
+
+    const sources = ['Orchestrator', 'System', 'Network', 'Security', 'Database', 'Phase Manager'];
     const messages = [
       { level: 'info', msg: 'Heartbeat check successful' },
       { level: 'debug', msg: 'Syncing state with remote shards...' },
@@ -31,6 +44,8 @@ export function GlobalConsole() {
       { level: 'warn', msg: 'Latency spike detected (140ms)' },
       { level: 'info', msg: 'Garbage collection scheduled' },
       { level: 'debug', msg: 'Re-indexing vector store...' },
+      { level: 'success', msg: 'PHASE_COMPLETE: Foundation Setup' },
+      { level: 'info', msg: 'Transitioning to Phase: Backend Core' },
     ];
 
     const interval = setInterval(() => {
@@ -45,11 +60,11 @@ export function GlobalConsole() {
         message: randomMsg.msg
       };
 
-      setLogs(prev => [...prev.slice(-99), newLog]);
+      setInternalLogs(prev => [...prev.slice(-99), newLog]);
     }, 2500);
 
     return () => clearInterval(interval);
-  }, [isPaused]);
+  }, [isPaused, externalLogs]);
 
   // Auto-scroll
   useEffect(() => {
@@ -128,7 +143,7 @@ export function GlobalConsole() {
                         variant="ghost" 
                         size="icon" 
                         className="h-6 w-6 text-zinc-400 hover:text-zinc-200"
-                        onClick={(e) => { e.stopPropagation(); setLogs([]); }}
+                        onClick={(e) => { e.stopPropagation(); setInternalLogs([]); }}
                     >
                         <Trash2 className="size-3" />
                     </Button>
@@ -150,22 +165,36 @@ export function GlobalConsole() {
                 className="flex-1 overflow-y-auto p-2 space-y-0.5 font-mono text-[11px]"
             >
                 {logs.map((log) => (
-                    <div key={log.id} className="flex items-start gap-3 hover:bg-zinc-900/30 px-2 py-0.5 rounded group">
-                        <span className="text-zinc-600 w-16 shrink-0 select-none">{log.timestamp}</span>
-                        <span className={cn(
-                            "w-20 shrink-0 uppercase font-bold select-none",
-                            log.level === 'info' && "text-blue-400",
-                            log.level === 'warn' && "text-amber-400",
-                            log.level === 'error' && "text-red-400",
-                            log.level === 'success' && "text-emerald-400",
-                            log.level === 'debug' && "text-zinc-500",
-                        )}>
-                            [{log.level}]
-                        </span>
-                        <span className="w-24 shrink-0 text-violet-400/70 truncate select-none">{log.source}</span>
-                        <span className="text-zinc-300 break-all group-hover:text-white transition-colors">
-                            {log.message}
-                        </span>
+                    <div 
+                        key={log.id} 
+                        className={cn(
+                            "flex flex-col gap-1 px-2 py-0.5 hover:bg-zinc-900/30 rounded group transition-colors",
+                            log.nodeId && "cursor-pointer hover:bg-zinc-900/50"
+                        )}
+                        onClick={() => onLogClick?.(log)}
+                    >
+                        <div className="flex items-start gap-3">
+                            <span className="text-zinc-600 w-16 shrink-0 select-none">{log.timestamp}</span>
+                            <span className={cn(
+                                "w-20 shrink-0 uppercase font-bold select-none",
+                                log.level === 'info' && "text-blue-400",
+                                log.level === 'warn' && "text-amber-400",
+                                log.level === 'error' && "text-red-400",
+                                log.level === 'success' && "text-emerald-400",
+                                log.level === 'debug' && "text-zinc-500",
+                            )}>
+                                [{log.level}]
+                            </span>
+                            <span className="w-24 shrink-0 text-violet-400/70 truncate select-none">{log.source}</span>
+                            <span className="text-zinc-300 break-all group-hover:text-white transition-colors">
+                                {log.message}
+                            </span>
+                        </div>
+                        {log.toolOutput && (
+                            <div className="pl-[11rem] pb-2 pr-4">
+                                <ToolResultRenderer toolName={log.toolName} output={log.toolOutput} />
+                            </div>
+                        )}
                     </div>
                 ))}
                 {logs.length === 0 && (

@@ -21,20 +21,38 @@ export function EpicCard({ epic, onClick }: EpicCardProps) {
     onClick?.();
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleClick();
+    }
+  };
+
   return (
     <GlassCard 
       variant="bordered" 
       padding="md" 
       hoverable 
       clickable 
-      className="group bg-[#121214]/80 hover:bg-[#18181b] border-zinc-800/50"
+      className="group bg-[#121214]/80 hover:bg-[#18181b] border-zinc-800/50 focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:outline-none"
       onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      role="button"
+      tabIndex={0}
+      aria-label={`Epic ${epic.jiraKey}: ${epic.summary}. Status: ${epic.status}`}
     >
       <div className="flex items-start justify-between mb-3">
         <span className="px-2 py-0.5 rounded-md bg-zinc-900 text-[10px] font-mono text-zinc-500 border border-zinc-800 font-medium group-hover:border-zinc-700 transition-colors">
           {epic.jiraKey}
         </span>
-        <button className="p-1 -mr-1 -mt-1 rounded-full opacity-0 group-hover:opacity-100 hover:bg-zinc-800 text-zinc-500 transition-all">
+        <button 
+            className="p-1 -mr-1 -mt-1 rounded-full opacity-0 group-hover:opacity-100 focus:opacity-100 hover:bg-zinc-800 text-zinc-500 transition-all focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:outline-none"
+            onClick={(e) => {
+                e.stopPropagation();
+                // Add menu logic here
+            }}
+            aria-label="More options"
+        >
           <MoreHorizontal className="size-4" />
         </button>
       </div>

@@ -39,16 +39,18 @@ export function WorkflowKanban({ onEpicClick }: WorkflowKanbanProps) {
                         <div key={col.id} className="w-[300px] flex flex-col">
                             <div className="flex items-center justify-between mb-4 px-1">
                                 <div className="flex items-center gap-2">
-                                    <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">{col.label}</span>
+                                    <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider" id={`col-header-${col.id}`}>{col.label}</span>
                                     <span className="text-[10px] font-medium text-zinc-400 bg-zinc-900 border border-zinc-800 px-1.5 py-0.5 rounded-md min-w-[20px] text-center">
                                         {colEpics.length}
                                     </span>
                                 </div>
                             </div>
 
-                            <div className="flex flex-col gap-3">
+                            <div className="flex flex-col gap-3" role="list" aria-labelledby={`col-header-${col.id}`}>
                                 {colEpics.map(epic => (
-                                    <EpicCard key={epic.id} epic={epic} onClick={() => onEpicClick(epic.id)} />
+                                    <div key={epic.id} role="listitem">
+                                        <EpicCard epic={epic} onClick={() => onEpicClick(epic.id)} />
+                                    </div>
                                 ))}
                                 {colEpics.length === 0 && (
                                     <div className="h-32 rounded-2xl border border-dashed border-zinc-800/50 bg-zinc-900/20 flex items-center justify-center">

@@ -9,6 +9,8 @@ import { ActivityProvider } from './lib/context/activity-provider';
 import { NotificationsProvider } from './lib/context/notifications-provider';
 import { Toaster } from 'sonner@2.0.3';
 import { PageTransition } from '@/components/ui/page-transition';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 // Skeletons
 import { DashboardSkeleton } from '@/components/skeletons/DashboardSkeleton';
@@ -89,22 +91,24 @@ export default function App() {
 
   return (
     <ThemeProvider defaultTheme="dark" storageKey="ga-theme">
-      <SocketProvider>
-        <NotificationsProvider>
-          <ActivityProvider>
-            <AgentsProvider>
-              <EpicsProvider>
-                <AppShell currentView={currentView} onChangeView={handleNavigation}>
-                  <PageTransition key={currentView}>
-                    {renderView()}
-                  </PageTransition>
-                </AppShell>
-                <Toaster theme="dark" position="bottom-right" />
-              </EpicsProvider>
-            </AgentsProvider>
-          </ActivityProvider>
-        </NotificationsProvider>
-      </SocketProvider>
+      <DndProvider backend={HTML5Backend}>
+        <SocketProvider>
+          <NotificationsProvider>
+            <ActivityProvider>
+              <AgentsProvider>
+                <EpicsProvider>
+                  <AppShell currentView={currentView} onChangeView={handleNavigation}>
+                    <PageTransition key={currentView}>
+                      {renderView()}
+                    </PageTransition>
+                  </AppShell>
+                  <Toaster theme="dark" position="bottom-right" />
+                </EpicsProvider>
+              </AgentsProvider>
+            </ActivityProvider>
+          </NotificationsProvider>
+        </SocketProvider>
+      </DndProvider>
     </ThemeProvider>
   );
 }

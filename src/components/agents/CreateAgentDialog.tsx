@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { Bot, Terminal, Shield, Search, Server } from 'lucide-react';
+import { Bot, Terminal, Shield, Search, Server, Split } from 'lucide-react';
 
 interface CreateAgentDialogProps {
   open: boolean;
@@ -68,6 +68,7 @@ export function CreateAgentDialog({ open, onOpenChange, onCreate }: CreateAgentD
                         <SelectItem value="qa"><div className="flex items-center gap-2"><Shield className="size-3" /> QA</div></SelectItem>
                         <SelectItem value="reviewer"><div className="flex items-center gap-2"><Search className="size-3" /> Reviewer</div></SelectItem>
                         <SelectItem value="devops"><div className="flex items-center gap-2"><Server className="size-3" /> DevOps</div></SelectItem>
+                        <SelectItem value="logic"><div className="flex items-center gap-2"><Split className="size-3" /> Logic / Gate</div></SelectItem>
                     </SelectContent>
                 </Select>
             </div>
