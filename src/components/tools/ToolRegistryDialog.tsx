@@ -5,8 +5,8 @@ import { Input } from '../ui/input';
 import { Badge } from '../ui/badge';
 import { ScrollArea } from '../ui/scroll-area';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../ui/tabs';
-import { Search, Wrench, Download, Check, Terminal, Globe, Database, Shield, Plus } from 'lucide-react';
-import { toast } from 'sonner';
+import { Search, Wrench, Download, Check, Terminal, Globe, Database, Shield, Plus } from 'lucide-react@0.469.0?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
+import { toast } from 'sonner@2.0.3?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
 import { ToolBuilderWizard } from './ToolBuilderWizard';
 
 interface Tool {

@@ -2,10 +2,10 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { GlassCard } from '../ui/glass-card';
 import { Button } from '../ui/button';
-import { X, Copy, Check, Terminal, User, Send, Plus, Users, MessageSquare } from 'lucide-react';
+import { X, Copy, Check, Terminal, User, Send, Plus, Users, MessageSquare } from 'lucide-react@0.469.0?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
 import { ScrollArea } from '../ui/scroll-area';
 import { cn } from '../../lib/utils';
-import { toast } from 'sonner';
+import { toast } from 'sonner@2.0.3?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
 import { AgentNode } from './AgentTree';
 import {
   DropdownMenu,

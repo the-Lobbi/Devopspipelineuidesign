@@ -1,163 +1,165 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { 
+  ShieldAlert, 
+  Clock, 
+  AlertTriangle,
+  CheckCircle,
+  XCircle
+} from 'lucide-react@0.469.0?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
 import { Button } from '../ui/button';
-import { Badge } from '../ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../ui/dialog';
 import { ScrollArea } from '../ui/scroll-area';
-import { CheckCircle, XCircle, Clock, AlertCircle } from 'lucide-react';
-
-export interface ApprovalRequest {
-  id: string;
-  title: string;
-  description: string;
-  requestedBy: string;
-  requestedAt: string;
-  priority: 'low' | 'medium' | 'high' | 'critical';
-  type: 'deployment' | 'configuration' | 'access' | 'budget';
-  status: 'pending' | 'approved' | 'rejected';
-}
+import { Badge } from '../ui/badge';
 
 interface ApprovalQueueProps {
-  requests?: ApprovalRequest[];
-  onApprove?: (id: string) => void;
-  onReject?: (id: string) => void;
+  isOpen: boolean;
+  onClose: () => void;
+  onSelectApproval: (id: string) => void;
 }
 
-const MOCK_REQUESTS: ApprovalRequest[] = [
+interface ApprovalItem {
+  id: string;
+  title: string;
+  agent: string;
+  priority: 'high' | 'medium' | 'low';
+  status: 'pending' | 'approved' | 'rejected';
+  timestamp: string;
+  description: string;
+}
+
+const MOCK_APPROVALS: ApprovalItem[] = [
   {
     id: '1',
     title: 'Deploy to Production',
-    description: 'Deploy version 2.1.0 to production environment',
-    requestedBy: 'DevOps Agent',
-    requestedAt: '2 minutes ago',
+    agent: 'DevOps Agent',
     priority: 'high',
-    type: 'deployment',
     status: 'pending',
+    timestamp: '2 min ago',
+    description: 'Requesting approval to deploy version 2.3.1 to production environment'
   },
   {
     id: '2',
-    title: 'Increase Budget Limit',
-    description: 'Increase API call budget from $100 to $150',
-    requestedBy: 'Orchestrator',
-    requestedAt: '5 minutes ago',
-    priority: 'medium',
-    type: 'budget',
+    title: 'Database Migration',
+    agent: 'Planner Agent',
+    priority: 'high',
     status: 'pending',
+    timestamp: '5 min ago',
+    description: 'Schema changes require manual review before execution'
   },
+  {
+    id: '3',
+    title: 'Budget Approval',
+    agent: 'Orchestrator',
+    priority: 'medium',
+    status: 'pending',
+    timestamp: '12 min ago',
+    description: 'Cloud infrastructure costs exceeding threshold ($500/month)'
+  }
 ];
 
-export function ApprovalQueue({
-  requests = MOCK_REQUESTS,
-  onApprove,
-  onReject,
-}: ApprovalQueueProps) {
-  const getPriorityColor = (priority: ApprovalRequest['priority']) => {
+export function ApprovalQueue({ isOpen, onClose, onSelectApproval }: ApprovalQueueProps) {
+  const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'critical':
-        return 'destructive';
-      case 'high':
-        return 'default';
-      case 'medium':
-        return 'secondary';
-      case 'low':
-        return 'outline';
-    }
-  };
-
-  const getTypeIcon = (type: ApprovalRequest['type']) => {
-    switch (type) {
-      case 'deployment':
-        return '🚀';
-      case 'configuration':
-        return '⚙️';
-      case 'access':
-        return '🔐';
-      case 'budget':
-        return '💰';
+      case 'high': return 'text-red-400 bg-red-500/10 border-red-500/20';
+      case 'medium': return 'text-amber-400 bg-amber-500/10 border-amber-500/20';
+      case 'low': return 'text-blue-400 bg-blue-500/10 border-blue-500/20';
+      default: return 'text-zinc-400 bg-zinc-500/10 border-zinc-500/20';
     }
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Clock className="h-5 w-5" />
-          Approval Queue
-          {requests.filter((r) => r.status === 'pending').length > 0 && (
-            <Badge variant="destructive" className="ml-auto">
-              {requests.filter((r) => r.status === 'pending').length}
-            </Badge>
-          )}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <ScrollArea className="h-[400px] pr-4">
-          {requests.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
-              <CheckCircle className="h-12 w-12 mb-2" />
-              <p>No pending approvals</p>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent 
+        aria-describedby={undefined} 
+        className="max-w-3xl max-h-[80vh] overflow-hidden bg-[#09090b] border-zinc-800 text-zinc-200 p-0 gap-0 flex flex-col shadow-2xl"
+      >
+        {/* Header */}
+        <div className="p-6 border-b border-zinc-800 bg-zinc-900/50 flex items-start gap-5">
+          <div className="p-3 bg-amber-500/10 rounded-xl border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
+            <ShieldAlert className="size-6 text-amber-500 animate-pulse" />
+          </div>
+          <div className="flex-1">
+            <div className="flex items-center justify-between">
+              <DialogTitle className="text-xl font-bold text-white tracking-tight">
+                Pending Approvals
+              </DialogTitle>
+              <Badge variant="outline" className="bg-zinc-900 border-zinc-700 text-amber-400">
+                {MOCK_APPROVALS.filter(a => a.status === 'pending').length} Pending
+              </Badge>
             </div>
-          ) : (
-            <div className="space-y-4">
-              {requests.map((request) => (
-                <Card key={request.id} className="border-l-4 border-l-primary">
-                  <CardContent className="pt-4">
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex items-start gap-2">
-                        <span className="text-2xl">{getTypeIcon(request.type)}</span>
-                        <div>
-                          <h4 className="font-semibold">{request.title}</h4>
-                          <p className="text-sm text-muted-foreground">
-                            {request.description}
-                          </p>
-                        </div>
-                      </div>
-                      <Badge variant={getPriorityColor(request.priority)}>
-                        {request.priority}
+            <DialogDescription className="text-zinc-400 text-sm mt-1">
+              Review and approve agent actions requiring human oversight
+            </DialogDescription>
+          </div>
+        </div>
+        
+        {/* Content */}
+        <ScrollArea className="flex-1 bg-[#0c0c0e]">
+          <div className="p-6 space-y-3">
+            {MOCK_APPROVALS.map((approval) => (
+              <div
+                key={approval.id}
+                className="bg-zinc-900/50 border border-zinc-800 rounded-lg p-4 hover:border-zinc-700 transition-colors cursor-pointer"
+                onClick={() => onSelectApproval(approval.id)}
+              >
+                <div className="flex items-start justify-between mb-2">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-1">
+                      <h3 className="text-white">{approval.title}</h3>
+                      <Badge className={getPriorityColor(approval.priority)}>
+                        {approval.priority}
                       </Badge>
                     </div>
-                    <div className="flex items-center justify-between mt-4">
-                      <div className="text-xs text-muted-foreground">
-                        <span className="font-medium">{request.requestedBy}</span>
-                        {' • '}
-                        {request.requestedAt}
-                      </div>
-                      {request.status === 'pending' && (
-                        <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => onReject?.(request.id)}
-                            className="h-8"
-                          >
-                            <XCircle className="h-4 w-4 mr-1" />
-                            Reject
-                          </Button>
-                          <Button
-                            size="sm"
-                            onClick={() => onApprove?.(request.id)}
-                            className="h-8"
-                          >
-                            <CheckCircle className="h-4 w-4 mr-1" />
-                            Approve
-                          </Button>
-                        </div>
-                      )}
-                      {request.status === 'approved' && (
-                        <Badge variant="default" className="bg-green-500">
-                          Approved
-                        </Badge>
-                      )}
-                      {request.status === 'rejected' && (
-                        <Badge variant="destructive">Rejected</Badge>
-                      )}
+                    <p className="text-sm text-zinc-400 mb-2">{approval.description}</p>
+                    <div className="flex items-center gap-4 text-xs text-zinc-500">
+                      <span className="flex items-center gap-1">
+                        <Clock className="size-3" />
+                        {approval.timestamp}
+                      </span>
+                      <span>Agent: {approval.agent}</span>
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Handle approve action
+                      }}
+                    >
+                      <CheckCircle className="size-4" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Handle reject action
+                      }}
+                    >
+                      <XCircle className="size-4" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </ScrollArea>
-      </CardContent>
-    </Card>
+
+        {/* Footer */}
+        <div className="p-4 border-t border-zinc-800 bg-zinc-900/50 flex justify-end gap-2">
+          <Button
+            variant="outline"
+            onClick={onClose}
+            className="bg-zinc-900 border-zinc-700 text-zinc-300 hover:bg-zinc-800 hover:text-white"
+          >
+            Close
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }

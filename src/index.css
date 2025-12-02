@@ -1240,6 +1240,10 @@
     max-height: var(--radix-select-content-available-height);
   }
 
+  .max-h-\[80vh\] {
+    max-height: 80vh;
+  }
+
   .max-h-\[90vh\] {
     max-height: 90vh;
   }
@@ -4959,6 +4963,18 @@
   }
 
   @media (hover: hover) {
+    .hover\:bg-emerald-500\/10:hover {
+      background-color: color-mix(in srgb, oklch(.696 .17 162.48) 10%, transparent);
+    }
+
+    @supports (color: color-mix(in lab, red, red)) {
+      .hover\:bg-emerald-500\/10:hover {
+        background-color: color-mix(in oklab, var(--color-emerald-500) 10%, transparent);
+      }
+    }
+  }
+
+  @media (hover: hover) {
     .hover\:bg-emerald-500\/30:hover {
       background-color: color-mix(in srgb, oklch(.696 .17 162.48) 30%, transparent);
     }
@@ -5026,6 +5042,18 @@
     @supports (color: color-mix(in lab, red, red)) {
       .hover\:bg-red-400\/10:hover {
         background-color: color-mix(in oklab, var(--color-red-400) 10%, transparent);
+      }
+    }
+  }
+
+  @media (hover: hover) {
+    .hover\:bg-red-500\/10:hover {
+      background-color: color-mix(in srgb, oklch(.637 .237 25.331) 10%, transparent);
+    }
+
+    @supports (color: color-mix(in lab, red, red)) {
+      .hover\:bg-red-500\/10:hover {
+        background-color: color-mix(in oklab, var(--color-red-500) 10%, transparent);
       }
     }
   }
@@ -5225,6 +5253,12 @@
   @media (hover: hover) {
     .hover\:text-accent-foreground:hover {
       color: var(--accent-foreground);
+    }
+  }
+
+  @media (hover: hover) {
+    .hover\:text-emerald-300:hover {
+      color: var(--color-emerald-300);
     }
   }
 

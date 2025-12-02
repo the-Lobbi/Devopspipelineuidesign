@@ -3,12 +3,12 @@ import { useFilteredEpics, useAppStore } from '../../lib/store';
 import { FilterDropdown } from '../epics/filter-dropdown';
 import { EpicTableRow } from '../epics/EpicTableRow';
 import { BulkActions } from '../epics/BulkActions';
-import { Plus, Search } from 'lucide-react';
+import { Plus, Search } from 'lucide-react@0.469.0?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
 import { Button } from '../ui/button';
 import { ScrollArea } from '../ui/scroll-area';
 import { Input } from "../ui/input";
 import { NewEpicDialog } from '../epics/new-epic-dialog';
-import { toast } from 'sonner';
+import { toast } from 'sonner@2.0.3?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
 
 interface EpicListViewProps {
   onEpicClick: (epicId: string) => void;

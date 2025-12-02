@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { WebSocketManager } from '../../lib/websocket/manager';
 import { useAppStore } from '../../lib/store';
-import { toast } from 'sonner';
+import { toast } from 'sonner@2.0.3?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
 
 // Singleton instance for the application
 let wsManager: WebSocketManager | null = null;

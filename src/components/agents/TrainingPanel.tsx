@@ -4,9 +4,9 @@ import { Badge } from '../ui/badge';
 import { Slider } from '../ui/slider';
 import { ScrollArea } from '../ui/scroll-area';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { Brain, Play, RefreshCw, Upload, FileText, AlertCircle, CheckCircle2, Activity } from 'lucide-react';
+import { Brain, Play, RefreshCw, Upload, FileText, AlertCircle, CheckCircle2, Activity } from 'lucide-react@0.469.0?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
 import { cn } from '../../lib/utils';
-import { toast } from 'sonner';
+import { toast } from 'sonner@2.0.3?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
 
 interface TrainingPanelProps {
     agent: any;

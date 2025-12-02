@@ -8,8 +8,8 @@ import { Slider } from '../ui/slider';
 import { Switch } from '../ui/switch';
 import { Card } from '../ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { Brain, Shield, Zap, Bot, Code, MessageSquare, Database } from 'lucide-react';
-import { toast } from 'sonner';
+import { Brain, Shield, Zap, Bot, Code, MessageSquare, Database } from 'lucide-react@0.469.0?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
+import { toast } from 'sonner@2.0.3?deps=react@18.3.1,react-dom@18.3.1&external=react,react-dom';
 
 // Types
 interface AgentFormData {
